@@ -4,6 +4,7 @@
 
 import logging
 import pandas as pd
+import numpy as np
 import os.path
 import sys
 
@@ -28,20 +29,25 @@ def save_nph_stock_selection_data(date, before=True):
         if data is None:
             return
 
-        table_name = tbs.TABLE_CN_STOCK_SELECTION["name"]
-        # 删除老数据。
-        logging.info(f"######## 删除老数据：{table_name} #######")
-        if mdb.checkTableIsExist(table_name):
-            logging.info(f"######## 删除老数据：{table_name} #######")
-            _date = data.iloc[0]["date"]
-            del_sql = f"DELETE FROM `{table_name}` where `date` = '{_date}'"
-            mdb.executeSql(del_sql)
-            cols_type = None
-        else:
-            logging.info(f"######## 创建新数据：{table_name} #######")
-            cols_type = tbs.get_field_types(tbs.TABLE_CN_STOCK_SELECTION["columns"])
+        # 将NaN替换为None
+        data = data.replace({np.nan: None})
 
-        mdb.insert_db_from_df(data, table_name, cols_type, False, "`date`,`code`")
+        from instock.core.db import DatabaseSession, StockSelection
+
+        # 删除老数据
+        logging.info("######## 删除老数据：StockSelection #######")
+        _date = data.iloc[0]["date"]
+        with DatabaseSession() as db:
+            db.query(StockSelection).filter(StockSelection.date == _date).delete()
+
+            # 插入新数据
+            records = []
+            for _, row in data.iterrows():
+                record = StockSelection(**row.to_dict())
+                records.append(record)
+
+            db.bulk_save_objects(records)
+            db.commit()
     except Exception as e:
         logging.error(
             f"selection_data_daily_job.save_nph_stock_selection_data处理异常：{e}"
