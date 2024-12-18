@@ -1,0 +1,53 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  GREETING: Hello, World!
+env:
+  # 数据库环境变量
+  db_host: localhost
+  db_user: root
+  db_password: instockdb
+  db_database: instockdb
+  db_port: 8010
+  db_charset: utf8mb4
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+  setup:
+    cmds:
+      - export python=/Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python
+      # - pipenv shell
+  # 启动web服务
+  web:
+    cmds:
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/web/web_service.py
+  # 启动job服务
+  daily_job:
+    cmds:
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py
+  day:
+    cmds:
+      - rm -rf instock/log/stock_execute_job.log
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py 2024-12-10
+  # 最近一个月的日常数据
+  month:
+    cmds:
+      - rm -rf instock/log/stock_execute_job.log
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py 2024-12-10 2024-12-18
+  selection:
+    cmds:
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/selection_data_daily_job.py
+  init:
+    cmds:
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/init_job.py
+  db:
+    cmds:
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/core/db.py
+  basic_data_daily:
+    cmds:
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/basic_data_daily_job.py

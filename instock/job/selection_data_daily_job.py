@@ -15,8 +15,8 @@ import instock.core.tablestructure as tbs
 import instock.lib.database as mdb
 import instock.core.stockfetch as stf
 
-__author__ = 'myh '
-__date__ = '2023/5/5 '
+__author__ = "myh "
+__date__ = "2023/5/5 "
 
 
 def save_nph_stock_selection_data(date, before=True):
@@ -28,19 +28,24 @@ def save_nph_stock_selection_data(date, before=True):
         if data is None:
             return
 
-        table_name = tbs.TABLE_CN_STOCK_SELECTION['name']
+        table_name = tbs.TABLE_CN_STOCK_SELECTION["name"]
         # 删除老数据。
+        logging.info(f"######## 删除老数据：{table_name} #######")
         if mdb.checkTableIsExist(table_name):
-            _date = data.iloc[0]['date']
+            logging.info(f"######## 删除老数据：{table_name} #######")
+            _date = data.iloc[0]["date"]
             del_sql = f"DELETE FROM `{table_name}` where `date` = '{_date}'"
             mdb.executeSql(del_sql)
             cols_type = None
         else:
-            cols_type = tbs.get_field_types(tbs.TABLE_CN_STOCK_SELECTION['columns'])
+            logging.info(f"######## 创建新数据：{table_name} #######")
+            cols_type = tbs.get_field_types(tbs.TABLE_CN_STOCK_SELECTION["columns"])
 
         mdb.insert_db_from_df(data, table_name, cols_type, False, "`date`,`code`")
     except Exception as e:
-        logging.error(f"selection_data_daily_job.save_nph_stock_selection_data处理异常：{e}")
+        logging.error(
+            f"selection_data_daily_job.save_nph_stock_selection_data处理异常：{e}"
+        )
 
 
 def main():
@@ -48,5 +53,5 @@ def main():
 
 
 # main函数入口
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

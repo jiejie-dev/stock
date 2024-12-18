@@ -12,14 +12,14 @@ cpath = os.path.abspath(os.path.join(cpath_current, os.pardir))
 sys.path.append(cpath)
 import instock.lib.database as mdb
 
-__author__ = 'myh '
-__date__ = '2023/3/10 '
+__author__ = "myh "
+__date__ = "2023/3/10 "
 
 
 # 创建新数据库。
 def create_new_database():
     _MYSQL_CONN_DBAPI = mdb.MYSQL_CONN_DBAPI.copy()
-    _MYSQL_CONN_DBAPI['database'] = "mysql"
+    _MYSQL_CONN_DBAPI["database"] = "mysql"
     with pymysql.connect(**_MYSQL_CONN_DBAPI) as conn:
         with conn.cursor() as db:
             try:
@@ -61,5 +61,5 @@ def main():
 
 
 # main函数入口
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
