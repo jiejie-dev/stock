@@ -10,8 +10,6 @@ cpath = os.path.abspath(os.path.join(cpath_current, os.pardir))
 sys.path.append(cpath)
 from instock.core.db import DatabaseSession, StockBlockTrade
 import instock.lib.run_template as runt
-import instock.core.tablestructure as tbs
-import instock.lib.database as mdb
 import instock.core.stockfetch as stf
 
 __author__ = "myh "

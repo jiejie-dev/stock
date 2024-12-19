@@ -242,17 +242,75 @@ class StockFundFlow(Base):
     code = Column(String(6), primary_key=True, comment="代码")
     name = Column(String(20), comment="名称")
     new_price = Column(Float, comment="最新价")
-    change_rate = Column(Float, comment="今日涨跌幅")
-    fund_amount = Column(Integer, comment="今日主力净流入-净额")
-    fund_rate = Column(Float, comment="今日主力净流入-净占比")
-    fund_amount_super = Column(Integer, comment="今日超大单净流入-净额")
-    fund_rate_super = Column(Float, comment="今日超大单净流入-净占比")
-    fund_amount_large = Column(Integer, comment="今日大单净流入-净额")
-    fund_rate_large = Column(Float, comment="今日大单净流入-净占比")
-    fund_amount_medium = Column(Integer, comment="今日中单净流入-净额")
-    fund_rate_medium = Column(Float, comment="今日中单净流入-净占比")
-    fund_amount_small = Column(Integer, comment="今日小单净流入-净额")
-    fund_rate_small = Column(Float, comment="今日小单净流入-净占比")
+
+    # 涨跌幅
+    change_rate = Column(Float, comment="涨跌幅")
+    change_rate_3 = Column(Float, comment="3日涨跌幅")
+    change_rate_5 = Column(Float, comment="5日涨跌幅")
+    change_rate_10 = Column(Float, comment="10日涨跌幅")
+    change_rate_20 = Column(Float, comment="20日涨跌幅")
+
+    # 主力资金
+    fund_amount = Column(BIGINT, comment="主力净流入-净额")
+    fund_rate = Column(Float, comment="主力净流入-净占比")
+
+    # 超大单资金
+    fund_amount_super = Column(BIGINT, comment="超大单净流入-净额")
+    fund_rate_super = Column(Float, comment="超大单净流入-净占比")
+
+    # 3日超大单
+    fund_amount_super_3 = Column(BIGINT, comment="3日超大单净流入-净额")
+    fund_rate_super_3 = Column(Float, comment="3日超大单净流入-净占比")
+
+    # 大单资金
+    fund_amount_large = Column(BIGINT, comment="大单净流入-净额")
+    fund_rate_large = Column(Float, comment="大单净流入-净占比")
+
+    # 中单资金
+    fund_amount_medium = Column(BIGINT, comment="中单净流入-净额")
+    fund_rate_medium = Column(Float, comment="中单净流入-净占比")
+
+    # 小单资金
+    fund_amount_small = Column(BIGINT, comment="小单净流入-净额")
+    fund_rate_small = Column(Float, comment="小单净流入-净占比")
+
+    # 3日资金
+    fund_amount_3 = Column(BIGINT, comment="3日主力净额")
+    fund_rate_3 = Column(Float, comment="3日主力净占比")
+
+    # 5日资金
+    fund_amount_5 = Column(BIGINT, comment="5日主力净额")
+    fund_rate_5 = Column(Float, comment="5日主力净占比")
+
+    # 10日资金
+    fund_amount_10 = Column(BIGINT, comment="10日主力净额")
+    fund_rate_10 = Column(Float, comment="10日主力净占比")
+
+    # 20日资金
+    fund_amount_20 = Column(BIGINT, comment="20日主力净额")
+    fund_rate_20 = Column(Float, comment="20日主力净占比")
+
+    # DDX指标
+    ddx = Column(Float, comment="当日DDX")
+    ddx_3d = Column(Float, comment="3日DDX")
+    ddx_5d = Column(Float, comment="5日DDX")
+    ddx_red_10d = Column(SmallInteger, comment="10日内DDX飘红天数")
+
+    # 连续涨跌
+    upnday = Column(SmallInteger, comment="连涨天数")
+    downnday = Column(SmallInteger, comment="连跌天数")
+
+    # 上市数据
+    listing_yield_year = Column(Float, comment="上市以来年化收益率")
+    listing_volatility_year = Column(Float, comment="上市以来年化波动率")
+
+    # 沪深港通
+    mutual_netbuy_amt = Column(BIGINT, comment="沪深股通净买入金额")
+    hold_ratio = Column(Float, comment="沪深股通持股比例")
+
+    # 股票代码
+    secucode = Column(String(10), comment="全代码")
+
     created_at = Column(DateTime, comment="创建时间")
 
 
@@ -264,22 +322,22 @@ class StockBonus(Base):
     date = Column(Date, primary_key=True, comment="日期")
     code = Column(String(6), primary_key=True, comment="代码")
     name = Column(String(20), comment="名称")
-    convertible_total_rate = Column(Float, comment="送转股份-送转总比例")
-    convertible_rate = Column(Float, comment="送转股份-送转比例")
-    convertible_transfer_rate = Column(Float, comment="送转股份-转股比例")
-    bonusaward_rate = Column(Float, comment="现金分红-现金分红比例")
-    bonusaward_yield = Column(Float, comment="现金分红-股息率")
+    convertible_total_rate = Column(Float, comment="送转总比例")
+    convertible_rate = Column(Float, comment="送股比例")
+    convertible_transfer_rate = Column(Float, comment="转股比例")
+    bonusaward_rate = Column(Float, comment="派息比例")
+    bonusaward_yield = Column(Float, comment="股息率")
     basic_eps = Column(Float, comment="每股收益")
     bvps = Column(Float, comment="每股净资产")
     per_capital_reserve = Column(Float, comment="每股公积金")
     per_unassign_profit = Column(Float, comment="每股未分配利润")
-    netprofit_yoy_ratio = Column(Float, comment="净利润同比增长")
-    total_shares = Column(Integer, comment="总股本")
+    netprofit_yoy_ratio = Column(Float, comment="净利润同比增长率")
+    total_shares = Column(BIGINT, comment="总股本")
     plan_date = Column(Date, comment="预案公告日")
     record_date = Column(Date, comment="股权登记日")
     ex_dividend_date = Column(Date, comment="除权除息日")
-    progress = Column(String(50), comment="方案进度")
-    report_date = Column(Date, comment="最新公告日期")
+    progress = Column(String(20), comment="方案进度")
+    report_date = Column(Date, comment="报告期")
     created_at = Column(DateTime, comment="创建时间")
 
 
@@ -400,6 +458,145 @@ class StockSelection(Base):
     basiceps_yoy_ratio = Column(Float, comment="每股收益同比增长率")
     total_profit_growthrate = Column(Float, comment="利润总额同比增长率")
     operate_profit_growthrate = Column(Float, comment="营业利润同比增长率")
+    equity_ratio = Column(Float, comment="权益比率")
+    equity_multiplier = Column(Float, comment="权益乘数")
+    current_ratio = Column(Float, comment="流动比率")
+    speed_ratio = Column(Float, comment="速动比率")
+    holder_newest = Column(Integer, comment="最新股东户数")
+    hold_amount = Column(Float, comment="机构持股金额")
+    avg_hold_num = Column(Float, comment="户均持股数")
+    holdnum_growthrate_3q = Column(Float, comment="股东户数季度环比")
+    holdnum_growthrate_hy = Column(Float, comment="股东户数半年环比")
+    hold_ratio_count = Column(Integer, comment="机构持股家数")
+    free_hold_ratio = Column(Float, comment="流通股东占比")
+    macd_golden_fork = Column(SmallInteger, comment="MACD金叉")
+    macd_golden_forkz = Column(SmallInteger, comment="MACD零轴金叉")
+    macd_golden_forky = Column(SmallInteger, comment="MACD远离零轴金叉")
+    kdj_golden_fork = Column(SmallInteger, comment="KDJ金叉")
+    kdj_golden_forkz = Column(SmallInteger, comment="KDJ零轴金叉")
+    kdj_golden_forky = Column(SmallInteger, comment="KDJ远离零轴金叉")
+    break_through = Column(SmallInteger, comment="突破")
+    low_funds_inflow = Column(SmallInteger, comment="低位资金流入")
+    high_funds_outflow = Column(SmallInteger, comment="高位资金流出")
+    breakup_ma_5days = Column(SmallInteger, comment="突破5日均线")
+    breakup_ma_10days = Column(SmallInteger, comment="突破10日均线")
+    breakup_ma_20days = Column(SmallInteger, comment="突破20日均线")
+    breakup_ma_30days = Column(SmallInteger, comment="突破30日均线")
+    breakup_ma_60days = Column(SmallInteger, comment="突破60日均线")
+    long_avg_array = Column(SmallInteger, comment="长均线多头排列")
+    short_avg_array = Column(SmallInteger, comment="短均线多头排列")
+    upper_large_volume = Column(SmallInteger, comment="放量上涨")
+    down_narrow_volume = Column(SmallInteger, comment="缩量下跌")
+    one_dayang_line = Column(SmallInteger, comment="一阳穿三线")
+    two_dayang_lines = Column(SmallInteger, comment="两阳穿三线")
+    rise_sun = Column(SmallInteger, comment="旭日东升")
+    power_fulgun = Column(SmallInteger, comment="火力全开")
+    restore_justice = Column(SmallInteger, comment="绝地反击")
+    down_7days = Column(SmallInteger, comment="连续7日下跌")
+    upper_8days = Column(SmallInteger, comment="连续8日上涨")
+    upper_9days = Column(SmallInteger, comment="连续9日上涨")
+    upper_4days = Column(SmallInteger, comment="连续4日上涨")
+    heaven_rule = Column(SmallInteger, comment="天量天价")
+    upside_volume = Column(SmallInteger, comment="放量")
+    bearish_engulfing = Column(SmallInteger, comment="看跌吞没")
+    reversing_hammer = Column(SmallInteger, comment="锤子线")
+    shooting_star = Column(SmallInteger, comment="流星线")
+    evening_star = Column(SmallInteger, comment="黄昏之星")
+    first_dawn = Column(SmallInteger, comment="曙光初现")
+    pregnant = Column(SmallInteger, comment="十字胎")
+    black_cloud_tops = Column(SmallInteger, comment="乌云盖顶")
+    morning_star = Column(SmallInteger, comment="晨星")
+    narrow_finish = Column(SmallInteger, comment="收窄")
+    limited_lift_f6m = Column(SmallInteger, comment="未来6个月限售股解禁")
+    limited_lift_f1y = Column(SmallInteger, comment="未来1年限售股解禁")
+    limited_lift_6m = Column(SmallInteger, comment="过去6个月限售股解禁")
+    limited_lift_1y = Column(SmallInteger, comment="过去1年限售股解禁")
+    directional_seo_1m = Column(SmallInteger, comment="1个月定向增发")
+    directional_seo_3m = Column(SmallInteger, comment="3个月定向增发")
+    directional_seo_6m = Column(SmallInteger, comment="6个月定向增发")
+    directional_seo_1y = Column(SmallInteger, comment="1年定向增发")
+    recapitalize_1m = Column(SmallInteger, comment="1个月配股")
+    recapitalize_3m = Column(SmallInteger, comment="3个月配股")
+    recapitalize_6m = Column(SmallInteger, comment="6个月配股")
+    recapitalize_1y = Column(SmallInteger, comment="1年配股")
+    equity_pledge_1m = Column(SmallInteger, comment="1个月股权质押")
+    equity_pledge_3m = Column(SmallInteger, comment="3个月股权质押")
+    equity_pledge_6m = Column(SmallInteger, comment="6个月股权质押")
+    equity_pledge_1y = Column(SmallInteger, comment="1年股权质押")
+    pledge_ratio = Column(Float, comment="质押比例")
+    goodwill_scale = Column(Float, comment="商誉规模")
+    goodwill_assets_ratro = Column(Float, comment="商誉占总资产比")
+    predict_type = Column(String(20), comment="预测类型")
+    par_dividend_pretax = Column(Float, comment="每股税前股息")
+    par_dividend = Column(Float, comment="每股股息")
+    par_it_equity = Column(Float, comment="每股净资产")
+    holder_change_3m = Column(Integer, comment="3个月股东人数变化")
+    executive_change_3m = Column(Integer, comment="3个月高管变动")
+    org_survey_3m = Column(Integer, comment="3个月机构调研")
+    org_rating = Column(String(20), comment="机构评级")
+    allcorp_num = Column(Integer, comment="机构持股家数")
+    allcorp_fund_num = Column(Integer, comment="基金持股家数")
+    allcorp_qs_num = Column(Integer, comment="券商持股家数")
+    allcorp_qfii_num = Column(Integer, comment="QFII持股家数")
+    allcorp_bx_num = Column(Integer, comment="保险持股家数")
+    allcorp_sb_num = Column(Integer, comment="社保持股家数")
+    allcorp_xt_num = Column(Integer, comment="信托持股家数")
+    allcorp_ratio = Column(Float, comment="机构持股比例")
+    allcorp_fund_ratio = Column(Float, comment="基金持股比例")
+    allcorp_qs_ratio = Column(Float, comment="券商持股比例")
+    allcorp_qfii_ratio = Column(Float, comment="QFII持股比例")
+    allcorp_bx_ratio = Column(Float, comment="保险持股比例")
+    allcorp_sb_ratio = Column(Float, comment="社保持股比例")
+    allcorp_xt_ratio = Column(Float, comment="信托持股比例")
+    popularity_rank = Column(Integer, comment="人气排名")
+    rank_change = Column(Integer, comment="排名变动")
+    upp_days = Column(Integer, comment="连涨天数")
+    down_days = Column(Integer, comment="连跌天数")
+    new_high = Column(SmallInteger, comment="创新高")
+    new_down = Column(SmallInteger, comment="创新低")
+    newfans_ratio = Column(Float, comment="新增粉丝占比")
+    bigfans_ratio = Column(Float, comment="大V粉丝占比")
+    concern_rank_7days = Column(Integer, comment="7日关注排名")
+    browse_rank = Column(Integer, comment="浏览排名")
+    amplitude = Column(Float, comment="振幅")
+    is_issue_break = Column(SmallInteger, comment="发行价破发")
+    is_bps_break = Column(SmallInteger, comment="净资产破发")
+    now_newhigh = Column(SmallInteger, comment="盘中新高")
+    now_newlow = Column(SmallInteger, comment="盘中新低")
+    high_recent_3days = Column(SmallInteger, comment="3日新高")
+    high_recent_5days = Column(SmallInteger, comment="5日新高")
+    high_recent_10days = Column(SmallInteger, comment="10日新高")
+    high_recent_20days = Column(SmallInteger, comment="20日新高")
+    high_recent_30days = Column(SmallInteger, comment="30日新高")
+    low_recent_3days = Column(SmallInteger, comment="3日新低")
+    low_recent_5days = Column(SmallInteger, comment="5日新低")
+    low_recent_10days = Column(SmallInteger, comment="10日新低")
+    low_recent_20days = Column(SmallInteger, comment="20日新低")
+    low_recent_30days = Column(SmallInteger, comment="30日新低")
+    win_market_3days = Column(SmallInteger, comment="3日跑赢大盘")
+    holder_ratio = Column(Float, comment="股东人数占比")
+    ps9 = Column(Float, comment="市销率TTM")
+    per_retained_earning = Column(Float, comment="每股留存收益")
+    parent_netprofit = Column(Float, comment="归属母公司净利润")
+    deduct_netprofit = Column(Float, comment="扣除非经常性损益后的净利润")
+    total_operate_income = Column(Float, comment="营业总收入")
+    roe_weight = Column(Float, comment="加权净资产收益率")
+    jroa = Column(Float, comment="加权总资产收益率")
+    roic = Column(Float, comment="投入资本回报率")
+    zxgxl = Column(Float, comment="资金贡献率")
+    sale_gpr = Column(Float, comment="销售毛利率")
+    sale_npr = Column(Float, comment="销售净利率")
+    netprofit_yoy_ratio = Column(Float, comment="净利润同比增长率")
+    deduct_netprofit_growthrate = Column(Float, comment="扣非净利润增长率")
+    toi_yoy_ratio = Column(Float, comment="营业收入同比增长率")
+    netprofit_growthrate_3y = Column(Float, comment="净利润3年复合增长率")
+    income_growthrate_3y = Column(Float, comment="营收3年复合增长率")
+    predict_netprofit_ratio = Column(Float, comment="预测净利润增长率")
+    predict_income_ratio = Column(Float, comment="预测营收增长率")
+    basiceps_yoy_ratio = Column(Float, comment="每股收益同比增长率")
+    total_profit_growthrate = Column(Float, comment="利润总额同比增长率")
+    operate_profit_growthrate = Column(Float, comment="营业利润同比增长率")
+    debt_asset_ratio = Column(Float, comment="资产负债率")
     equity_ratio = Column(Float, comment="权益比率")
     equity_multiplier = Column(Float, comment="权益乘数")
     current_ratio = Column(Float, comment="流动比率")
@@ -761,7 +958,7 @@ class StockKlinePattern(Base):
 
 
 class StockTop(Base):
-    """龙虎榜数据"""
+    """股票龙虎榜"""
 
     __tablename__ = "cn_stock_top"
 
@@ -779,6 +976,11 @@ class StockTop(Base):
     net_amount = Column(Integer, comment="净额")
     top_type = Column(String(20), comment="上榜类型")
     top_detail = Column(String(2000), comment="上榜明细")
+    ranking_times = Column(Integer, comment="上榜次数")
+    sum_buy = Column(Integer, comment="累积购买额")
+    sum_sell = Column(Integer, comment="累积卖出额")
+    buy_seat = Column(Integer, comment="买入席位数")
+    sell_seat = Column(Integer, comment="卖出席位数")
     created_at = Column(DateTime, comment="创建时间")
 
 
@@ -788,20 +990,109 @@ class StockFundFlowIndustry(Base):
     __tablename__ = "cn_stock_fund_flow_industry"
 
     date = Column(Date, primary_key=True, comment="日期")
-    industry = Column(String(20), primary_key=True, comment="行业名称")
+    name = Column(String(20), primary_key=True, comment="行业名称")
+    industry = Column(String(20), comment="行业名称")
+    stock_name = Column(String(20), comment="股票名称")
+
+    # 涨跌幅
     change_rate = Column(Float, comment="涨跌幅")
-    fund_amount = Column(Integer, comment="主力净流入-净额")
+    change_rate_3 = Column(Float, comment="3日涨跌幅")
+    change_rate_5 = Column(Float, comment="5日涨跌幅")
+    change_rate_10 = Column(Float, comment="10日涨跌幅")
+    change_rate_20 = Column(Float, comment="20日涨跌幅")
+
+    # 主力资金
+    fund_amount = Column(BIGINT, comment="主力净流入-净额")
     fund_rate = Column(Float, comment="主力净流入-净占比")
-    fund_amount_super = Column(Integer, comment="超大单净流入-净额")
+
+    # 超大单资金
+    fund_amount_super = Column(BIGINT, comment="超大单净流入-净额")
     fund_rate_super = Column(Float, comment="超大单净流入-净占比")
-    fund_amount_large = Column(Integer, comment="大单净流入-净额")
+
+    # 大单资金
+    fund_amount_large = Column(BIGINT, comment="大单净流入-净额")
     fund_rate_large = Column(Float, comment="大单净流入-净占比")
-    fund_amount_medium = Column(Integer, comment="中单净流入-净额")
+
+    # 中单资金
+    fund_amount_medium = Column(BIGINT, comment="中单净流入-净额")
     fund_rate_medium = Column(Float, comment="中单净流入-净占比")
-    fund_amount_small = Column(Integer, comment="小单净流入-净额")
+
+    # 小单资金
+    fund_amount_small = Column(BIGINT, comment="小单净流入-净额")
     fund_rate_small = Column(Float, comment="小单净流入-净占比")
+
+    # 3日资金
+    fund_amount_3days = Column(BIGINT, comment="3日主力净额")
+    fund_rate_3days = Column(Float, comment="3日主力净占比")
+    fund_amount_3 = Column(BIGINT, comment="3日主力净额")
+    fund_rate_3 = Column(Float, comment="3日主力净占比")
+    fund_amount_super_3 = Column(BIGINT, comment="3日超大单净额")
+    fund_rate_super_3 = Column(Float, comment="3日超大单净占比")
+    fund_amount_large_3 = Column(BIGINT, comment="3日大单净额")
+    fund_rate_large_3 = Column(Float, comment="3日大单净占比")
+    fund_amount_medium_3 = Column(BIGINT, comment="3日中单净额")
+    fund_rate_medium_3 = Column(Float, comment="3日中单净占比")
+    fund_amount_small_3 = Column(BIGINT, comment="3日小单净额")
+    fund_rate_small_3 = Column(Float, comment="3日小单净占比")
+
+    # 5日资金
+    fund_amount_5days = Column(BIGINT, comment="5日主力净额")
+    fund_rate_5days = Column(Float, comment="5日主力净占比")
+    fund_amount_5 = Column(BIGINT, comment="5日主力净额")
+    fund_rate_5 = Column(Float, comment="5日主力净占比")
+    fund_amount_super_5 = Column(BIGINT, comment="5日超大单净额")
+    fund_rate_super_5 = Column(Float, comment="5日超大单净占比")
+    fund_amount_large_5 = Column(BIGINT, comment="5日大单净额")
+    fund_rate_large_5 = Column(Float, comment="5日大单净占比")
+    fund_amount_medium_5 = Column(BIGINT, comment="5日中单净额")
+    fund_rate_medium_5 = Column(Float, comment="5日中单净占比")
+    fund_amount_small_5 = Column(BIGINT, comment="5日小单净额")
+    fund_rate_small_5 = Column(Float, comment="5日小单净占比")
+
+    # 10日资金
+    fund_amount_10days = Column(BIGINT, comment="10日主力净额")
+    fund_rate_10days = Column(Float, comment="10日主力净占比")
+    fund_amount_10 = Column(BIGINT, comment="10日主力净额")
+    fund_rate_10 = Column(Float, comment="10日主力净占比")
+    fund_amount_super_10 = Column(BIGINT, comment="10日超大单净额")
+    fund_rate_super_10 = Column(Float, comment="10日超大单净占比")
+    fund_amount_large_10 = Column(BIGINT, comment="10日大单净额")
+    fund_rate_large_10 = Column(Float, comment="10日大单净占比")
+    fund_amount_medium_10 = Column(BIGINT, comment="10日中单净额")
+    fund_rate_medium_10 = Column(Float, comment="10日中单净占比")
+    fund_amount_small_10 = Column(BIGINT, comment="10日小单净额")
+    fund_rate_small_10 = Column(Float, comment="10日小单净占比")
+
+    # 统计数据
     stock_count = Column(Integer, comment="股票数量")
+    rise_count = Column(Integer, comment="上涨家数")
+    fall_count = Column(Integer, comment="下跌家数")
+
+    # 涨跌幅
+    rise_max = Column(Float, comment="涨跌幅最大")
+    fall_max = Column(Float, comment="涨跌幅最小")
+
     created_at = Column(DateTime, comment="创建时间")
+
+    # 3日领涨股
+    stock_name_3 = Column(String(20), comment="3日领涨股")
+    stock_code_3 = Column(String(6), comment="3日领涨股代码")
+    stock_rate_3 = Column(Float, comment="3日领涨股涨跌幅")
+
+    # 5日领涨股
+    stock_name_5 = Column(String(20), comment="5日领涨股")
+    stock_code_5 = Column(String(6), comment="5日领涨股代码")
+    stock_rate_5 = Column(Float, comment="5日领涨股涨跌幅")
+
+    # 10日领涨股
+    stock_name_10 = Column(String(20), comment="10日领涨股")
+    stock_code_10 = Column(String(6), comment="10日领涨股代码")
+    stock_rate_10 = Column(Float, comment="10日领涨股涨跌幅")
+
+    # 20日领涨股
+    stock_name_20 = Column(String(20), comment="20日领涨股")
+    stock_code_20 = Column(String(6), comment="20日领涨股代码")
+    stock_rate_20 = Column(Float, comment="20日领涨股涨跌幅")
 
 
 class StockFundFlowConcept(Base):
@@ -810,20 +1101,109 @@ class StockFundFlowConcept(Base):
     __tablename__ = "cn_stock_fund_flow_concept"
 
     date = Column(Date, primary_key=True, comment="日期")
-    concept = Column(String(50), primary_key=True, comment="概念名称")
+    name = Column(String(50), primary_key=True, comment="概念名称")
+    concept = Column(String(50), comment="概念名称")
+    stock_name = Column(String(20), comment="股票名称")
+
+    # 涨跌幅
     change_rate = Column(Float, comment="涨跌幅")
-    fund_amount = Column(Integer, comment="主力净流入-净额")
+    change_rate_3 = Column(Float, comment="3日涨跌幅")
+    change_rate_5 = Column(Float, comment="5日涨跌幅")
+    change_rate_10 = Column(Float, comment="10日涨跌幅")
+    change_rate_20 = Column(Float, comment="20日涨跌幅")
+
+    # 主力资金
+    fund_amount = Column(BIGINT, comment="主力净流入-净额")
     fund_rate = Column(Float, comment="主力净流入-净占比")
-    fund_amount_super = Column(Integer, comment="超大单净流入-净额")
+
+    # 超大单资金
+    fund_amount_super = Column(BIGINT, comment="超大单净流入-净额")
     fund_rate_super = Column(Float, comment="超大单净流入-净占比")
-    fund_amount_large = Column(Integer, comment="大单净流入-净额")
+
+    # 大单资金
+    fund_amount_large = Column(BIGINT, comment="大单净流入-净额")
     fund_rate_large = Column(Float, comment="大单净流入-净占比")
-    fund_amount_medium = Column(Integer, comment="中单净流入-净额")
+
+    # 中单资金
+    fund_amount_medium = Column(BIGINT, comment="中单净流入-净额")
     fund_rate_medium = Column(Float, comment="中单净流入-净占比")
-    fund_amount_small = Column(Integer, comment="小单净流入-净额")
+
+    # 小单资金
+    fund_amount_small = Column(BIGINT, comment="小单净流入-净额")
     fund_rate_small = Column(Float, comment="小单净流入-净占比")
+
+    # 3日资金
+    fund_amount_3days = Column(BIGINT, comment="3日主力净额")
+    fund_rate_3days = Column(Float, comment="3日主力净占比")
+    fund_amount_3 = Column(BIGINT, comment="3日主力净额")
+    fund_rate_3 = Column(Float, comment="3日主力净占比")
+    fund_amount_super_3 = Column(BIGINT, comment="3日超大单净额")
+    fund_rate_super_3 = Column(Float, comment="3日超大单净占比")
+    fund_amount_large_3 = Column(BIGINT, comment="3日大单净额")
+    fund_rate_large_3 = Column(Float, comment="3日大单净占比")
+    fund_amount_medium_3 = Column(BIGINT, comment="3日中单净额")
+    fund_rate_medium_3 = Column(Float, comment="3日中单净占比")
+    fund_amount_small_3 = Column(BIGINT, comment="3日小单净额")
+    fund_rate_small_3 = Column(Float, comment="3日小单净占比")
+
+    # 5日资金
+    fund_amount_5days = Column(BIGINT, comment="5日主力净额")
+    fund_rate_5days = Column(Float, comment="5日主力净占比")
+    fund_amount_5 = Column(BIGINT, comment="5日主力净额")
+    fund_rate_5 = Column(Float, comment="5日主力净占比")
+    fund_amount_super_5 = Column(BIGINT, comment="5日超大单净额")
+    fund_rate_super_5 = Column(Float, comment="5日超大单净占比")
+    fund_amount_large_5 = Column(BIGINT, comment="5日大单净额")
+    fund_rate_large_5 = Column(Float, comment="5日大单净占比")
+    fund_amount_medium_5 = Column(BIGINT, comment="5日中单净额")
+    fund_rate_medium_5 = Column(Float, comment="5日中单净占比")
+    fund_amount_small_5 = Column(BIGINT, comment="5日小单净额")
+    fund_rate_small_5 = Column(Float, comment="5日小单净占比")
+
+    # 10日资金
+    fund_amount_10days = Column(BIGINT, comment="10日主力净额")
+    fund_rate_10days = Column(Float, comment="10日主力净占比")
+    fund_amount_10 = Column(BIGINT, comment="10日主力净额")
+    fund_rate_10 = Column(Float, comment="10日主力净占比")
+    fund_amount_super_10 = Column(BIGINT, comment="10日超大单净额")
+    fund_rate_super_10 = Column(Float, comment="10日超大单净占比")
+    fund_amount_large_10 = Column(BIGINT, comment="10日大单净额")
+    fund_rate_large_10 = Column(Float, comment="10日大单净占比")
+    fund_amount_medium_10 = Column(BIGINT, comment="10日中单净额")
+    fund_rate_medium_10 = Column(Float, comment="10日中单净占比")
+    fund_amount_small_10 = Column(BIGINT, comment="10日小单净额")
+    fund_rate_small_10 = Column(Float, comment="10日小单净占比")
+
+    # 统计数据
     stock_count = Column(Integer, comment="股票数量")
+    rise_count = Column(Integer, comment="上涨家数")
+    fall_count = Column(Integer, comment="下跌家数")
+
+    # 涨跌幅
+    rise_max = Column(Float, comment="涨跌幅最大")
+    fall_max = Column(Float, comment="涨跌幅最小")
+
     created_at = Column(DateTime, comment="创建时间")
+
+    # 3日领涨股
+    stock_name_3 = Column(String(20), comment="3日领涨股")
+    stock_code_3 = Column(String(6), comment="3日领涨股代码")
+    stock_rate_3 = Column(Float, comment="3日领涨股涨跌幅")
+
+    # 5日领涨股
+    stock_name_5 = Column(String(20), comment="5日领涨股")
+    stock_code_5 = Column(String(6), comment="5日领涨股代码")
+    stock_rate_5 = Column(Float, comment="5日领涨股涨跌幅")
+
+    # 10日领涨股
+    stock_name_10 = Column(String(20), comment="10日领涨股")
+    stock_code_10 = Column(String(6), comment="10日领涨股代码")
+    stock_rate_10 = Column(Float, comment="10日领涨股涨跌幅")
+
+    # 20日领涨股
+    stock_name_20 = Column(String(20), comment="20日领涨股")
+    stock_code_20 = Column(String(6), comment="20日领涨股代码")
+    stock_rate_20 = Column(Float, comment="20日领涨股涨跌幅")
 
 
 class StockBlockTrade(Base):

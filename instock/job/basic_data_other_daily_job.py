@@ -6,6 +6,7 @@ import concurrent.futures
 import os.path
 import sys
 import pandas as pd
+import numpy as np
 
 cpath_current = os.path.dirname(os.path.dirname(__file__))
 cpath = os.path.abspath(os.path.join(cpath_current, os.pardir))
@@ -16,12 +17,11 @@ from instock.core.db import (
     StockFundFlow,
     StockFundFlowConcept,
     StockFundFlowIndustry,
+    StockSpot,
     StockSpotBuy,
     StockTop,
 )
 import instock.lib.run_template as runt
-import instock.core.tablestructure as tbs
-import instock.lib.database as mdb
 import instock.core.stockfetch as stf
 
 __author__ = "myh "
@@ -46,18 +46,7 @@ def save_nph_stock_top_data(date, before=True):
             # 将DataFrame转换为模型对象列表
             stock_objects = []
             for _, row in data.iterrows():
-                stock = StockTop(
-                    date=date,
-                    code=row["code"],
-                    name=row["name"],
-                    rank=row["rank"],
-                    reason=row["reason"],
-                    buy_value=row["buy_value"],
-                    sell_value=row["sell_value"],
-                    net_value=row["net_value"],
-                    buy_count=row["buy_count"],
-                    sell_count=row["sell_count"],
-                )
+                stock = StockTop(**row)
                 stock_objects.append(stock)
 
             # 批量插入数据
@@ -91,6 +80,9 @@ def save_nph_stock_fund_flow_data(date, before=True):
         if data is None or len(data.index) == 0:
             return
 
+        # 将NaN替换为None
+        data = data.replace({np.nan: None})
+
         data.insert(0, "date", date.strftime("%Y-%m-%d"))
 
         # 使用上下文管理器处理数据库会话
@@ -101,23 +93,7 @@ def save_nph_stock_fund_flow_data(date, before=True):
             # 将DataFrame转换为模型对象列表
             fund_flow_objects = []
             for _, row in data.iterrows():
-                fund_flow = StockFundFlow(
-                    date=date,
-                    code=row["code"],
-                    name=row["name"],
-                    new_price=row["new_price"],
-                    change_rate=row["change_rate"],
-                    fund_amount=row["fund_amount"],
-                    fund_rate=row["fund_rate"],
-                    fund_amount_super=row["fund_amount_super"],
-                    fund_rate_super=row["fund_rate_super"],
-                    fund_amount_large=row["fund_amount_large"],
-                    fund_rate_large=row["fund_rate_large"],
-                    fund_amount_medium=row["fund_amount_medium"],
-                    fund_rate_medium=row["fund_rate_medium"],
-                    fund_amount_small=row["fund_amount_small"],
-                    fund_rate_small=row["fund_rate_small"],
-                )
+                fund_flow = StockFundFlow(**row)
                 fund_flow_objects.append(fund_flow)
 
             # 批量插入数据
@@ -189,6 +165,9 @@ def stock_sector_fund_flow_data(date, index_sector):
         if data is None or len(data.index) == 0:
             return
 
+        # 将NaN替换为None
+        data = data.replace({np.nan: None})
+
         data.insert(0, "date", date.strftime("%Y-%m-%d"))
 
         # 使用上下文管理器处理数据库会话
@@ -205,9 +184,7 @@ def stock_sector_fund_flow_data(date, index_sector):
             # 将DataFrame转换为模型对象列表并批量插入
             records = []
             for _, row in data.iterrows():
-                record = model_class()
-                for column in data.columns:
-                    setattr(record, column, row[column])
+                record = model_class(**row)
                 records.append(record)
 
             db.bulk_save_objects(records)
@@ -256,6 +233,9 @@ def save_nph_stock_bonus(date, before=True):
         if data is None or len(data.index) == 0:
             return
 
+        # 将NaN替换为None
+        data = data.replace({np.nan: None})
+
         # 使用上下文管理器处理数据库会话
         with DatabaseSession() as db:
             # 删除当天的老数据
@@ -264,27 +244,7 @@ def save_nph_stock_bonus(date, before=True):
             # 将DataFrame转换为模型对象列表
             bonus_objects = []
             for _, row in data.iterrows():
-                bonus = StockBonus(
-                    date=date,
-                    code=row["code"],
-                    name=row["name"],
-                    convertible_total_rate=row["convertible_total_rate"],
-                    convertible_rate=row["convertible_rate"],
-                    convertible_transfer_rate=row["convertible_transfer_rate"],
-                    bonusaward_rate=row["bonusaward_rate"],
-                    bonusaward_yield=row["bonusaward_yield"],
-                    basic_eps=row["basic_eps"],
-                    bvps=row["bvps"],
-                    per_capital_reserve=row["per_capital_reserve"],
-                    per_unassign_profit=row["per_unassign_profit"],
-                    netprofit_yoy_ratio=row["netprofit_yoy_ratio"],
-                    total_shares=row["total_shares"],
-                    plan_date=row["plan_date"],
-                    record_date=row["record_date"],
-                    ex_dividend_date=row["ex_dividend_date"],
-                    progress=row["progress"],
-                    report_date=row["report_date"],
-                )
+                bonus = StockBonus(**row)
                 bonus_objects.append(bonus)
 
             # 批量插入数据
@@ -297,33 +257,30 @@ def save_nph_stock_bonus(date, before=True):
 # 基本面选股
 def stock_spot_buy(date):
     try:
-        _table_name = tbs.TABLE_CN_STOCK_SPOT["name"]
-        if not mdb.checkTableIsExist(_table_name):
-            return
-
-        sql = f"""SELECT * FROM `{_table_name}` WHERE `date` = '{date}' and 
-                `pe9` > 0 and `pe9` <= 20 and `pbnewmrq` <= 10 and `roe_weight` >= 15"""
-        data = pd.read_sql(sql=sql, con=mdb.engine())
-        data = data.drop_duplicates(subset="code", keep="last")
-        if len(data.index) == 0:
-            return
-
         # 使用上下文管理器处理数据库会话
         with DatabaseSession() as db:
+            # 使用sqlalchemy查询
+            query = db.query(StockSpot).filter(
+                StockSpot.date == date,
+                StockSpot.pe9 > 0,
+                StockSpot.pe9 <= 20,
+                StockSpot.pbnewmrq <= 10,
+                StockSpot.roe_weight >= 15,
+            )
+
+            # 转换为DataFrame
+            data = pd.read_sql(query.statement, db.bind)
+            data = data.drop_duplicates(subset="code", keep="last")
+            if len(data.index) == 0:
+                return
+
             # 删除当天数据
             db.query(StockSpotBuy).filter(StockSpotBuy.date == date).delete()
 
             # 将DataFrame转换为模型对象列表
             spot_buy_objects = []
             for _, row in data.iterrows():
-                spot_buy = StockSpotBuy(
-                    date=date,
-                    code=row["code"],
-                    name=row["name"],
-                    pe9=row["pe9"],
-                    pbnewmrq=row["pbnewmrq"],
-                    roe_weight=row["roe_weight"],
-                )
+                spot_buy = StockSpotBuy(**row)
                 spot_buy_objects.append(spot_buy)
 
             # 批量插入数据
