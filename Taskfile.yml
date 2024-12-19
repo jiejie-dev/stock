@@ -54,3 +54,6 @@ tasks:
   basic_data_other:
     cmds:
       - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/basic_data_other_daily_job.py
+  indicators_data_daily:
+    cmds:
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/indicators_data_daily_job.py
