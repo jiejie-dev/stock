@@ -25,10 +25,12 @@ tasks:
   # 启动web服务
   web:
     cmds:
+      - rm -rf instock/log/stock_web.log
       - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/web/web_service.py
   # 启动job服务
   today:
     cmds:
+      - rm -rf instock/log/stock_execute_job.log
       - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py
   day:
     cmds:
