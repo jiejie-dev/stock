@@ -27,7 +27,7 @@ tasks:
     cmds:
       - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/web/web_service.py
   # 启动job服务
-  daily_job:
+  today:
     cmds:
       - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py
   day:
@@ -57,3 +57,6 @@ tasks:
   indicators_data_daily:
     cmds:
       - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/indicators_data_daily_job.py
+  backtest_data_daily:
+    cmds:
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/backtest_data_daily_job.py
