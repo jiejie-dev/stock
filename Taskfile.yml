@@ -40,7 +40,7 @@ tasks:
   month:
     cmds:
       - rm -rf instock/log/stock_execute_job.log
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py 2024-12-10 2024-12-18
+      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py 2024-12-01 2024-12-18
   selection:
     cmds:
       - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/selection_data_daily_job.py

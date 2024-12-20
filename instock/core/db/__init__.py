@@ -39,6 +39,7 @@ from .models.block_trade import StockBlockTrade
 from .models.indicators import StockIndicatorsSell
 from .models.bonus import StockBonus
 from .models.top import StockTop
+from .models.selection import StockSelection
 
 # 导出数据库工具函数
 from .utils import init_db, get_db, get_engine, DatabaseSession
@@ -56,6 +57,7 @@ __all__ = [
     "StockIndicatorsSell",
     "StockBonus",
     "StockTop",
+    "StockSelection",
     "init_db",
     "get_db",
     "get_engine",
