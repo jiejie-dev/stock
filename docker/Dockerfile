@@ -55,7 +55,7 @@ RUN sed -i "s@http://\(deb\|security\).debian.org@https://mirrors.aliyun.com@g" 
 
 WORKDIR /data
 #InStock软件
-COPY stock /data/InStock
+COPY . /data/InStock
 COPY cron/cron.hourly /etc/cron.hourly
 COPY cron/cron.workdayly /etc/cron.workdayly
 COPY cron/cron.monthly /etc/cron.monthly
