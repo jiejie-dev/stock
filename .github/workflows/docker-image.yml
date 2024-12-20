@@ -1,18 +1,37 @@
-姓名：名称：Docker 镜像 CI
+name: build-docker-image
 
 on:
   push:
-    branches: [    分支：[“主”]"master" ]
-  pull_request:
-    branches: [    分支：[“主”]"master" ]
+    branches:
+      - master
 
 jobs:
-
-  build:
-
-    runs-on:     运行：ubuntu-latest
-
+  docker:
+    runs-on: ubuntu-latest
     steps:
-    - uses:     - 使用：actions/checkout@v3
-    - name:     - 名称：构建 Docker 镜像
-      run:       运行： docker build 。--file Dockerfile --tag my-image-name:$(日期 +%s): $(日期 +%s)
+      - 
+        id: tagger
+        name: Autotag
+        uses: phish108/autotag-action@v1.1.64
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          branch: main
+          with-v: "true"
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: code2code-docker.pkg.coding.net
+          username: ${{ secrets.CODINGHUB_USERNAME }}
+          password: ${{ secrets.CODINGHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: code2code-docker.pkg.coding.net/puupees/k8s/stock:${{ steps.tagger.outputs.new-tag }}
