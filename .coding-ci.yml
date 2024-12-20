@@ -52,8 +52,3 @@ main:
         - name: docker push
           script: docker push code2code-docker.pkg.coding.net/puupees/k8s/stock:$NEW_VERSION
 
-
-# 这个案例描述的流程如下：
-
-# 1. 声明了在 master 分支在收到 push 事件时（即有新的 Commit 推送到 master 分支）的时候
-# 2. 依次执行任务 echo echo2 的script
