@@ -1,0 +1,59 @@
+# 快速开始
+
+# - 增加 CI 配置文件：
+# 1. 在项目根目录中增加 .coding-ci.yml 配置文件。
+# 2. 其描述了当仓库发生一些事件时，Coding-CI 应该如何去进行处理。
+# 3. 将配置文件 push 到远程 master
+
+# 想了解配置文件更多用法请移步 【配置文件】（https://ci.coding.net/docs/configuration.html）
+
+main:
+  # 代码 push
+  push:
+    - services:
+        # 流水线中启用 docker 服务
+        - docker
+      # 导入环境变量
+      # imports: https://e.coding.net/code2code/puupees/cd-config/secret.yaml
+      # 引用环境变量 登陆、build、push
+      stages:
+        - name: Set git credential
+          image: tencentcom/git-set-credential:latest
+          # imports: http://xxx/xxx.yml
+          settings:
+            userName: coding-auto-tag
+            userEmail: coding-auto-tag@mashangjiama.com
+            loginUserName: dev@mashangjiama.com
+            loginPassword: 121226nnn...N
+        - name: Git auto tag
+          image: coding2/git-auto-tag:latest
+          settings:
+            tagFormat: v\${version}
+            toFile: tag_info.json
+            dryRun: false
+            blockWhenFail: true
+            branch: main
+            repoUrlHttps: https://e.coding.net/code2code/puupees/stock.git
+          exports:
+            tag: NEW_TAG
+            version: NEW_VERSION
+        - name: Show tag
+          script: echo $NEW_TAG
+        - name: Show tag res
+          script: cat tag_info.json
+
+        # docker 登录构建相关
+        - name: docker login
+          # code2code-docker.pkg.coding.net 是之前记录的镜像源域名
+          # script: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD code2code-docker.pkg.coding.net
+          script: docker login -u k8s-1714052556118 -p 90ca7502fbb0efac231e63acf08441e0913cf1be code2code-docker.pkg.coding.net
+        - name: docker build
+          script: docker build -t code2code-docker.pkg.coding.net/puupees/k8s/stock:$NEW_VERSION .
+        - name: docker push
+          script: docker push code2code-docker.pkg.coding.net/puupees/k8s/stock:$NEW_VERSION
+
+
+# 这个案例描述的流程如下：
+
+# 1. 声明了在 master 分支在收到 push 事件时（即有新的 Commit 推送到 master 分支）的时候
+# 2. 依次执行任务 echo echo2 的script
