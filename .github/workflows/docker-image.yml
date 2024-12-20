@@ -16,7 +16,7 @@ jobs:
         uses: phish108/autotag-action@v1.1.64
         with:
           github-token: ${{ secrets.GH_TOKEN }}
-          branch: main
+          branch: master
           with-v: "true"
       -
         name: Checkout
