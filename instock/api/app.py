@@ -34,6 +34,10 @@ def get_stock_data():
     date = request.args.get("date", default=datetime.now().strftime("%Y-%m-%d"))
     # 只包含主板参数
     only_main_board = request.args.get("only_main_board", default=False)
+    # 市值大于参数
+    market_cap_gt = request.args.get("market_cap_gt", default=None)
+    # 市值小于参数
+    market_cap_lt = request.args.get("market_cap_lt", default=None)
 
     # 获取对应的模型类
     model_map = {
@@ -69,6 +73,11 @@ def get_stock_data():
             | model.code.startswith("001")
             | model.code.startswith("002")
         )
+    if market_cap_gt:
+        query = query.filter(model.total_market_cap > market_cap_gt)
+    if market_cap_lt:
+        query = query.filter(model.total_market_cap < market_cap_lt)
+
     # 只查询code,name,new_price,change_rate,volume_ratio,high_price,low_price,pre_close_price,volume,deal_amount,turnoverrate
     query = query.with_entities(
         model.code,
@@ -132,4 +141,4 @@ def get_indicators_data():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=9988)
+    app.run(host="0.0.0.0", port=8888)
