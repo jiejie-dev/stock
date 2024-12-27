@@ -38,6 +38,26 @@ def get_stock_data():
     market_cap_gt = request.args.get("market_cap_gt", default=None)
     # 市值小于参数
     market_cap_lt = request.args.get("market_cap_lt", default=None)
+    # 涨跌幅大于参数
+    change_rate_gt = request.args.get("change_rate_gt", default=None)
+    # 涨跌幅小于参数
+    change_rate_lt = request.args.get("change_rate_lt", default=None)
+    # 换手率大于参数
+    turnover_gt = request.args.get("turnover_gt", default=None)
+    # 换手率小于参数
+    turnover_lt = request.args.get("turnover_lt", default=None)
+    # 市盈率大于参数
+    pe_gt = request.args.get("pe_gt", default=None)
+    # 市盈率小于参数
+    pe_lt = request.args.get("pe_lt", default=None)
+    # 市净率大于参数
+    pb_gt = request.args.get("pb_gt", default=None)
+    # 市净率小于参数
+    pb_lt = request.args.get("pb_lt", default=None)
+    # 行业参数
+    industry = request.args.get("industry", default=None)
+    # 概念参数
+    concept = request.args.get("concept", default=None)
 
     # 获取对应的模型类
     model_map = {
@@ -77,6 +97,26 @@ def get_stock_data():
         query = query.filter(model.total_market_cap > market_cap_gt)
     if market_cap_lt:
         query = query.filter(model.total_market_cap < market_cap_lt)
+    if change_rate_gt:
+        query = query.filter(model.change_rate > change_rate_gt)
+    if change_rate_lt:
+        query = query.filter(model.change_rate < change_rate_lt)
+    if turnover_gt:
+        query = query.filter(model.turnoverrate > turnover_gt)
+    if turnover_lt:
+        query = query.filter(model.turnoverrate < turnover_lt)
+    if pe_gt:
+        query = query.filter(model.pe > pe_gt)
+    if pe_lt:
+        query = query.filter(model.pe < pe_lt)
+    if pb_gt:
+        query = query.filter(model.pb > pb_gt)
+    if pb_lt:
+        query = query.filter(model.pb < pb_lt)
+    if industry:
+        query = query.filter(model.industry == industry)
+    if concept:
+        query = query.filter(model.concept == concept)
 
     # 只查询code,name,new_price,change_rate,volume_ratio,high_price,low_price,pre_close_price,volume,deal_amount,turnoverrate
     query = query.with_entities(
