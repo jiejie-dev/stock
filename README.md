@@ -1,8 +1,8 @@
 **InStock股票系统**
 
-InStock股票系统，抓取每日股票、ETF关键数据，计算股票各种指标，识别K线各种形态，综合选股，内置多种选股策略，支持选股验证回测，支持自动交易，支持批量时间，运行高效，支持PC、平板、手机移动设备显示，同时提供Docker镜像方便安装，是量化投资的好帮手。
+InStock股票系统，抓取每日股票、ETF关键数据，计算股票技术指标、筹码分布，识别K线各种形态，综合选股，内置多种选股策略，支持选股验证回测，支持自动交易，支持批量时间，运行高效，支持PC、平板、手机移动设备显示，同时提供Docker镜像方便安装，是量化投资的好帮手。
 
-本项目地址：https://github.com/myhhub/stock
+The stock system,Capture key data on daily stocks and ETFs, calculate stock technical indicators, chip distribution, Position Cost Distribution(CYQ), identify various K-line forms, comprehensive stock selection, built-in multiple stock selection strategies, support stock selection verification and backtesting, support automatic trading, and support batch time , runs efficiently, supports display on PCs, tablets, and mobile phones, and provides Docker images for easy installation, making it a good helper for quantitative investment.
 
 Docker镜像：https://hub.docker.com/r/mayanghua/instock **镜像优化构建仅170M**。
 
@@ -25,7 +25,6 @@ MACD金叉、KDJ金叉、放量突破、低位资金净流入、高位资金净�
 股价表现、成交情况、资金流向、行情统计、沪深股通。
 ```
 ![](img/a3.jpg)
-![](img/a2.jpg)
 ![](img/a1.jpg)
 
 ##  二：股票每日数据
@@ -51,9 +50,6 @@ MACD金叉、KDJ金叉、放量突破、低位资金净流入、高位资金净�
 
 ![](img/01.jpg)
 ![](img/06.jpg)
-![](img/13.jpg)
-![](img/10.jpg)
-![](img/02.jpg)
 
 ## 四：判断买入卖出的股票
 
@@ -106,10 +102,14 @@ VR:
 正：出现买入信号
 ```
 ![](img/09.jpg)
+![](img/13.jpg)
 
+## 六：筹码分布
+
+筹码分布通过计算一定时间范围内股票的:最高价、最低价、成交数，输出对应价格成交数占整个流通盘比值的分布图形。计算高效准确，结果与东方财富等专业软件的一致，缺省计算210个交易日的成本，可以自行设定时间范围。
 ![](img/06.jpg)
 
-## 六：策略选股
+## 七：策略选股
 
 内置放量上涨、停机坪、回踩年线、突破平台、放量跌停等多种选股策略，同时封装了策略模板，方便扩展实现自己的策略。
 
@@ -161,7 +161,7 @@ VR:
 
 ![](img/04.jpg)
 
-## 七：选股验证
+## 八：选股验证
 
 
 对指标、策略等选出的股票进行回测，验证策略的成功率，是否可用。
@@ -169,7 +169,7 @@ VR:
 
 ![](img/05.jpg)
 
-## 八：自动交易
+## 九：自动交易
 
 支持自动交易，内置自动打新股的策略及示例策略，由于**涉及金钱**，规避可能存在风险，没有提供其他交易策略。
 
@@ -179,11 +179,11 @@ VR:
 
 ![](img/11.jpg)
 
-## 九：关注功能
+## 十：关注功能
 
 支持股票关注，关注股票在各个模块(含有的)置顶、标红显示。
 
-## 十：支持批量
+## 十一：支持批量
 
 
 可以通过时间段、枚举时间、当前时间进行指标计算、策略选股及回测等。同时支持智能识别交易日，可以输入任意日期。
@@ -205,23 +205,23 @@ K线形态作业 klinepattern_data_daily_job.py
 回测数据 python backtest_data_daily_job.py
 ```
 
-## 十一：存储采用数据库设计
+## 十二：存储采用数据库设计
 
 数据存储采用数据库设计，能保存历史数据，以及对数据进行扩展分析、统计、挖掘。系统实现自动创建数据库、数据表，封装了批量更新、插入数据，方便业务扩展。
 
 ![](img/07.jpg)
 
-## 十二：展示采用web设计
+## 十三：展示采用web设计
 
 采用web设计，可视化展示结果。对展示进行封装，添加新的业务表单，只需要配置视图字典就可自动出现业务可视化界面，方便业务功能扩展。
 
-## 十三：运行高效
+## 十四：运行高效
 
 
 采用多线程、单例共享资源有效提高运算效率。1天数据的抓取、计算指标、形态识别、策略选股、回测等全部任务运行时间大概4分钟（普通笔记本），计算天数越多效率越高。
 
 
-## 十四：方便调试
+## 十五：方便调试
 
 系统运行的重要日志记录在stock_execute_job.log(数据抓取、处理、分析)、stock_web.log(web服务)、stock_trade.log(交易服务)，方便调试发现问题。
 
@@ -257,7 +257,19 @@ python pip config --global set  global.index-url https://mirrors.aliyun.com/pypi
 ```
 在官网 https://dev.mysql.com/downloads/mysql/ 下载安装包，一键安装即可。
 ```
-### 3.安装依赖库
+### 3.安装 TA-Lib 共享静态库和头文件
+
+安装 TA-Lib C/C++ 共享静态库和头文件
+
+```
+https://ta-lib.org/install/ 下载最新 ta-lib 共享静态库和头文件，按照说明进行安装。
+安装方式按官方建议，会更简单：
+Windows Executable Installer
+macOS Homebrew
+Linux Debian packages
+```
+
+### 4.安装依赖库
 
 依赖库都是目前最新版本。
 
@@ -287,24 +299,7 @@ python  pipreqs --encoding utf-8 --force ./
 # 本项目是utf-8编码
 ```
 
-### 4.安装 talib
 
-```
-第一种方法. pip 下安装
-（1）https://www.ta-lib.org/下载并解压ta-lib-0.4.0-msvc.zip
-（2）解压并将ta_lib放在C盘根目录
-（3）https://visualstudio.microsoft.com/zh-hans/downloads/下载并安装Visual Studio Community，安装切记勾选Visual C++功能
-（4）Build TA-Lib Library # 构建 TA-Lib 库
-    ①在开始菜单中搜索并打开[Native Tools Command Prompt](根据操作系统选择32位或64位)
-    ②输入 cd C:\ta-lib\c\make\cdr\win32\msvc
-    ③构建库，输入 nmake
-（5）安装完成。
-第二种方法. Anaconda 下安装
-（1）打开Anaconda Prompt终端。
-（2）在终端输入命令行conda install -c conda-forge ta-lib 。
-（3）此处确认是否继续安装？输入y 继续安装，直到完成
-（4）安装完成。
-```
 ### 5.安装 Navicat（可选）
 
 Navicat可以方便管理数据库，以及可以手工对数据进行查看、处理、分析、挖掘。
