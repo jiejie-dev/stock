@@ -1,0 +1,31 @@
+version: '4.0.0'
+
+services:
+  instockdbservice:
+    image: library/mariadb:latest
+    container_name: InStockDbService
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - /data/mariadb/data:/var/lib/instockdb
+    networks:
+      - instock_network
+
+  instock:
+    image: mayanghua/instock:latest
+    container_name: InStock
+    ports:
+      - "9988:9988"
+    environment:
+      db_host: InStockDbService
+    volumes:
+      - /data/instockproxy.txt:/data/InStock/instock/config/proxy.txt
+    depends_on:
+      - instockdbservice
+    networks:
+      - instock_network
+
+networks:
+  instock_network:
+    driver: bridge
+
