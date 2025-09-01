@@ -9,50 +9,96 @@ import sys
 import time
 import instock.lib.trade_time as trd
 
-__author__ = 'myh '
-__date__ = '2023/3/10 '
+__author__ = "myh "
+__date__ = "2023/3/10 "
 
 
 # 通用函数，获得日期参数，支持批量作业。
 def run_with_args(run_fun, *args):
+    logging.info(f"开始执行函数: {run_fun.__name__}, 参数: {args}")
+
     if len(sys.argv) == 3:
         # 区间作业 python xxx.py 2023-03-01 2023-03-21
         tmp_year, tmp_month, tmp_day = sys.argv[1].split("-")
-        start_date = datetime.datetime(int(tmp_year), int(tmp_month), int(tmp_day)).date()
+        start_date = datetime.datetime(
+            int(tmp_year), int(tmp_month), int(tmp_day)
+        ).date()
         tmp_year, tmp_month, tmp_day = sys.argv[2].split("-")
         end_date = datetime.datetime(int(tmp_year), int(tmp_month), int(tmp_day)).date()
         run_date = start_date
+        logging.info(f"区间作业模式，开始日期: {start_date}, 结束日期: {end_date}")
+
         try:
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 while run_date <= end_date:
                     if trd.is_trade_date(run_date):
-                        executor.submit(run_fun, run_date, *args)
+                        logging.info(
+                            f"提交任务，日期: {run_date}, 函数: {run_fun.__name__}"
+                        )
+                        # 修复：根据函数名正确传递before参数
+                        if run_fun.__name__.startswith("save_nph"):
+                            executor.submit(run_fun, run_date, False)  # before=False
+                        elif run_fun.__name__.startswith("save_after_close"):
+                            executor.submit(run_fun, run_date, *args)
+                        else:
+                            executor.submit(run_fun, run_date, *args)
                         time.sleep(2)
                     run_date += datetime.timedelta(days=1)
         except Exception as e:
             logging.error(f"run_template.run_with_args处理异常：{run_fun}{sys.argv}{e}")
     elif len(sys.argv) == 2:
         # N个时间作业 python xxx.py 2023-03-01,2023-03-02
-        dates = sys.argv[1].split(',')
+        dates = sys.argv[1].split(",")
+        logging.info(f"多日期作业模式，日期列表: {dates}")
+
         try:
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 for date in dates:
                     tmp_year, tmp_month, tmp_day = date.split("-")
-                    run_date = datetime.datetime(int(tmp_year), int(tmp_month), int(tmp_day)).date()
+                    run_date = datetime.datetime(
+                        int(tmp_year), int(tmp_month), int(tmp_day)
+                    ).date()
                     if trd.is_trade_date(run_date):
-                        executor.submit(run_fun, run_date, *args)
+                        logging.info(
+                            f"提交任务，日期: {run_date}, 函数: {run_fun.__name__}"
+                        )
+                        # 修复：根据函数名正确传递before参数
+                        if run_fun.__name__.startswith("save_nph"):
+                            executor.submit(run_fun, run_date, False)  # before=False
+                        elif run_fun.__name__.startswith("save_after_close"):
+                            executor.submit(run_fun, run_date, *args)
+                        else:
+                            executor.submit(run_fun, run_date, *args)
                         time.sleep(2)
         except Exception as e:
             logging.error(f"run_template.run_with_args处理异常：{run_fun}{sys.argv}{e}")
     else:
         # 当前时间作业 python xxx.py
+        logging.info("当前时间作业模式")
         try:
             run_date, run_date_nph = trd.get_trade_date_last()
-            if run_fun.__name__.startswith('save_nph'):
+            logging.info(
+                f"获取交易日期，run_date: {run_date}, run_date_nph: {run_date_nph}"
+            )
+
+            if run_fun.__name__.startswith("save_nph"):
+                logging.info(
+                    f"函数名以save_nph开头，调用: {run_fun.__name__}({run_date_nph}, False)"
+                )
                 run_fun(run_date_nph, False)
-            elif run_fun.__name__.startswith('save_after_close'):
+            elif run_fun.__name__.startswith("save_after_close"):
+                logging.info(
+                    f"函数名以save_after_close开头，调用: {run_fun.__name__}({run_date}, {args})"
+                )
                 run_fun(run_date, *args)
             else:
+                logging.info(
+                    f"其他函数，调用: {run_fun.__name__}({run_date_nph}, {args})"
+                )
                 run_fun(run_date_nph, *args)
+
         except Exception as e:
             logging.error(f"run_template.run_with_args处理异常：{run_fun}{sys.argv}{e}")
+            import traceback
+
+            logging.error(f"异常堆栈：{traceback.format_exc()}")

@@ -18,50 +18,82 @@ tasks:
     cmds:
       - echo "{{.GREETING}}"
     silent: true
+  echo-env:
+    cmds:
+      - python echo_env.py
+      - python instock/lib/database.py
+  create-docker-db:
+    cmds:
+      - |
+        docker run --name instock-mysql -e MYSQL_ROOT_PASSWORD=instockdb \
+        -e MYSQL_DATABASE=instockdb -p 8010:3306 -d mysql:8.0 \
+        --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  destroy-docker-db:
+    cmds:
+      - docker rm -f instock-mysql
   setup:
     cmds:
-      - export python=/Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python
+      - export python=python
       # - pipenv shell
   # 启动web服务
   web:
     cmds:
       - rm -rf instock/log/stock_web.log
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/web/web_service.py
+      - python instock/web/web_service.py
   # 启动job服务
   today:
     cmds:
       - rm -rf instock/log/stock_execute_job.log
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py
+      - python instock/job/execute_daily_job.py
   day:
     cmds:
       - rm -rf instock/log/stock_execute_job.log
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py 2024-12-10
+      - python instock/job/execute_daily_job.py 2024-12-10
   # 最近一个月的日常数据
   month:
     cmds:
       - rm -rf instock/log/stock_execute_job.log
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/execute_daily_job.py 2024-11-01 2024-12-18
+      - python instock/job/execute_daily_job.py 2024-11-01 2025-08-31
+  # 最近两年
+  two-years:
+    cmds:
+      - python instock/job/execute_daily_job.py 2023-09-01 2025-08-31
   selection:
     cmds:
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/selection_data_daily_job.py
+      - python instock/job/selection_data_daily_job.py
   init:
     cmds:
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/init_job.py
+      - python instock/job/init_job.py
   db:
     cmds:
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/core/db.py
+      - python instock/scripts/init_database.py
   basic_data_daily:
     cmds:
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/basic_data_daily_job.py
+      - python instock/job/basic_data_daily_job.py
   basic_data_other:
     cmds:
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/basic_data_other_daily_job.py
+      - python instock/job/basic_data_other_daily_job.py
   indicators_data_daily:
     cmds:
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/indicators_data_daily_job.py
+      - python instock/job/indicators_data_daily_job.py
   backtest_data_daily:
     cmds:
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/job/backtest_data_daily_job.py
+      - python instock/job/backtest_data_daily_job.py
   api:
     cmds:
-      - /Users/jj/.local/share/virtualenvs/stock-uPtrpqt_/bin/python instock/api/app.py
+      - python instock/api/app.py
+  which-python:
+    cmds:
+      - which python
+  check-env:
+    cmds:
+      - python dev/说明/环境变量检查.py
+  check-db-connection:
+    cmds:
+      - python dev/说明/数据库连接测试.py
+  check-data-insert:
+    cmds:
+      - python instock/job/basic_data_daily_job.py
+      - python instock/job/basic_data_other_daily_job.py
+      - python instock/job/indicators_data_daily_job.py
+      - python instock/job/backtest_data_daily_job.py

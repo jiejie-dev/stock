@@ -16,11 +16,18 @@ sys.path.append(cpath)
 log_path = os.path.join(cpath_current, "log")
 if not os.path.exists(log_path):
     os.makedirs(log_path)
+
 logging.basicConfig(
-    format="%(asctime)s %(message)s",
-    filename=os.path.join(log_path, "stock_execute_job.log"),
+    format="%(levelname)s %(asctime)s %(message)s",
+    level=logging.DEBUG,
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler(
+            os.path.join(log_path, "stock_execute_job.log"), encoding="utf-8"
+        ),
+    ],
 )
-logging.getLogger().setLevel(logging.INFO)
+
 import init_job as bj
 import basic_data_daily_job as hdj
 import basic_data_other_daily_job as hdtj
